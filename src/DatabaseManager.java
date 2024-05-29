@@ -94,4 +94,31 @@ public class DatabaseManager {
         }
         return itemId;
     }
+    public static boolean itemExistsInDatabase(Item item) {
+        String query = "SELECT COUNT(*) AS count FROM items WHERE id = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, item.getId());
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            int count = rs.getInt("count");
+            return count > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static void deleteItemFromDatabase(int itemId) {
+        String query = "DELETE FROM items WHERE id = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, itemId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

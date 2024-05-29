@@ -24,7 +24,8 @@ public class MainForm extends JFrame {
     private JPanel panelData;
     private JPanel panelChartQuantity;
     private DefaultListModel<String> listModel;
-
+    private JLabel enterLabel;
+    private JLabel selectLabel;
     private JLabel supplyPriceLabel;
     private JLabel supplyQuantityLabel;
     private JLabel demandPriceLabel;
@@ -41,17 +42,21 @@ public class MainForm extends JFrame {
         panelData = new JPanel();
         panelChartQuantity = new JPanel();
 
-        panelControl.setLayout(new BorderLayout());
+        panelControl.setLayout(new GridLayout(5,1));
+
         listModel = new DefaultListModel<>();
         listItemTable = new JList<>(listModel);
         JScrollPane listScrollPane = new JScrollPane(listItemTable);
+        enterLabel = new JLabel("Enter ID");
+        selectLabel = new JLabel("Select Price");
 
         textFieldEnterID = new JTextField();
         loadDataToDatabase = new JButton("Load Data");
-
-        panelControl.add(listScrollPane, BorderLayout.CENTER);
-        panelControl.add(textFieldEnterID, BorderLayout.NORTH);
-        panelControl.add(loadDataToDatabase, BorderLayout.SOUTH);
+        panelControl.add(enterLabel);
+        panelControl.add(textFieldEnterID);
+        panelControl.add(selectLabel);
+        panelControl.add(listScrollPane);
+        panelControl.add(loadDataToDatabase);
 
         supplyPriceLabel = new JLabel("Supply Price: ");
         supplyQuantityLabel = new JLabel("Supply Quantity: ");
@@ -104,6 +109,7 @@ public class MainForm extends JFrame {
         Item item = ConnectorAPI.retrieveItemFromAPI(itemId);
         if (item != null) {
             DatabaseManager.saveItemToDatabase(item);
+            DatabaseManager.saveItemNameToDatabase(item);
             if (!listModel.contains(item.getName())) {
                 listModel.addElement(item.getName());
             }

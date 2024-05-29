@@ -4,6 +4,12 @@ public class Price
     private PriceDetail buys;
     private PriceDetail sells;
 
+    Price(PriceDetail buys, PriceDetail sells)
+    {
+        this.buys = buys;
+        this.sells = sells;
+    }
+
     // Getters and Setters
     public int getId() {
         return id;

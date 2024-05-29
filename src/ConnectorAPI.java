@@ -7,13 +7,14 @@ import java.net.URL;
 
 public class ConnectorAPI {
 
-    public static String fetchDataFromAPI(String apiUrl) throws Exception {
+    public static String fetchDataFromAPI(String apiUrl) throws Exception
+    {
         URL url = new URL(apiUrl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Accept", "application/json");
         if (conn.getResponseCode() != 200) {
-            throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
+            throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode() + "\nItem Not Found in API");
         }
         BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
         StringBuilder sb = new StringBuilder();

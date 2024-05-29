@@ -2,6 +2,11 @@ public class PriceDetail {
     private int quantity;
     private int unit_price;
 
+    PriceDetail(int quantity, int unit_price)
+    {
+        this.quantity = quantity;
+        this.unit_price = unit_price;
+    }
     // Getters and Setters
     public int getQuantity() {
         return quantity;

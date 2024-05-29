@@ -20,6 +20,7 @@ public class Main {
         if(item != null)
         {
             DatabaseManager.saveItemToDatabase(item);
+            DatabaseManager.saveItemNameToDatabase(item);
         }
     }
 }
