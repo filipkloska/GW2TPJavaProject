@@ -12,19 +12,50 @@ public class DatabaseManager {
         String tableName = item.getName().replace(' ', '_');
 
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-             CallableStatement stmt = conn.prepareCall("{CALL insertIntoTable(?, ?, ?, ?, ?, ?)}")) {
+             CallableStatement stmt = conn.prepareCall("{CALL insertIntoTable(?, ?, ?, ?, ?, ?, ?)}")) {
 
             stmt.setString(1, tableName);
-            stmt.setInt(2, item.getCurrentPrice().getBuys().getQuantity());
-            stmt.setInt(3, item.getCurrentPrice().getBuys().getUnitPrice());
-            stmt.setInt(4, item.getCurrentPrice().getSells().getQuantity());
-            stmt.setInt(5, item.getCurrentPrice().getSells().getUnitPrice());
-            stmt.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
+            stmt.setInt(2, item.getId());
+            stmt.setInt(3, item.getCurrentPrice().getBuys().getQuantity());
+            stmt.setInt(4, item.getCurrentPrice().getBuys().getUnitPrice());
+            stmt.setInt(5, item.getCurrentPrice().getSells().getQuantity());
+            stmt.setInt(6, item.getCurrentPrice().getSells().getUnitPrice());
+            stmt.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
             stmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    public static void saveItemNameToDatabase(Item item) {
+        String query = "INSERT INTO items (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name)";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setInt(1, item.getId());
+                stmt.setString(2, item.getName());
+                stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public static List<String> getItemNamesFromDatabase() {
+        List<String> itemNames = new ArrayList<>();
+        String query = "SELECT name FROM items";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                itemNames.add(rs.getString("name"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return itemNames;
+    }
+
+
     public static List<ItemRecord> getPriceData(String tableName) {
         List<ItemRecord> priceData = new ArrayList<>();
         String query = "SELECT fetch_timestamp, supply_price, supply_quantity, demand_price, demand_quantity FROM " + tableName;
@@ -45,5 +76,22 @@ public class DatabaseManager {
             e.printStackTrace();
         }
         return priceData;
+    }
+
+    public static int getItemIdFromTableName(String tableName) {
+        String query = "SELECT item_id FROM " + tableName + " LIMIT 1";
+        int itemId = -1;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                itemId = rs.getInt("item_id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return itemId;
     }
 }

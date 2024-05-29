@@ -29,7 +29,6 @@ public class ConnectorAPI {
     {
         Item item = null;
         try {
-            // Tworzymy instancję Gson
             Gson gson = new Gson();
             // URL do pobrania informacji o przedmiocie
             String itemApiUrl = "https://api.guildwars2.com/v2/items/" + itemId;
@@ -45,7 +44,6 @@ public class ConnectorAPI {
                 return null;
             }
             item = new Item(item.getId(), item.getName(), item.getIcon(), price);
-            // Wyświetlamy połączone informacje
             System.out.println("Name: " + item.getName());
             System.out.println("ID: " + item.getId());
             System.out.println("Icon: " + item.getIcon());
